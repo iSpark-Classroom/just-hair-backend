@@ -3,7 +3,9 @@ from app.models import Review
 from app import db,limiter
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity, create_refresh_token
 from datetime import timedelta
-
+    # db.init_app(app)
+    # migrate.init_app(app, db)    # db.init_app(app)
+    # migrate.init_app(app, db)
 
 reviews_bp = Blueprint("reviews", __name__)
 
@@ -14,7 +16,7 @@ reviews_bp = Blueprint("reviews", __name__)
 @reviews_bp.route('/api/reviews', methods=['POST'])
 def add_reviews():
     data = request.get_json()
-    new_reviews = Review(title = data['title'].lower(), description = data['description'], serviceProvider=data['serviceProvider'], client=data['client'], rating=data['rating'])
+    new_reviews = Review(title = data['title'], description = data['description'], serviceProvider=data['serviceProvider'], client=data['client'], rating=data['rating'])
 
     db.session.add(new_reviews)
     db.session.commit()

@@ -5,13 +5,44 @@ from flask_migrate import Migrate
 from app.config import Config
 import os
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+
+limiter = Limiter(key_func=get_remote_address, default_limits=["500 per day", "100 per hour"])  # no app yet
+
 
 db = SQLAlchemy()
 migrate = Migrate()
+bcrypt = Bcrypt()
+jwt = JWTManager()
+
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object("app.config.Config")
+
+    # initialize extensions
+    db.init_app(app)
+    migrate.init_app(app, db)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
+    limiter.init_app(app)
+
+    # CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    supports_credentials=True
+)
+
+
+    # swagger
+    from flask_swagger_ui import get_swaggerui_blueprint
+
     
     SWAGGER_URL = '/docs'
     API_URL = '/static/swagger.json'
@@ -22,8 +53,8 @@ def create_app():
     app.register_blueprint(swaggerui_blueprint,url_prefix=SWAGGER_URL)
 
     # Initialize extensions
-    db.init_app(app)
-    migrate.init_app(app, db)
+    # db.init_app(app)
+    # migrate.init_app(app, db)
 
     @app.route("/")
     def index():
@@ -35,9 +66,14 @@ def create_app():
     # Register routes (Blueprints)
     from app.routes.routes import routes_bp
     app.register_blueprint(routes_bp)
+   
+        
     from app.routes.reviews import  reviews_bp
     app.register_blueprint(reviews_bp)
-
+    
+ 
+    from app.routes.client import client_bp
+    app.register_blueprint(client_bp)
 
     return app
 
