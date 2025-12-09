@@ -1,5 +1,8 @@
 from app import db, bcrypt
 from flask_login import UserMixin
+from datetime import datetime
+# from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 # ============================
 # MANY-TO-MANY: Hairstyles ↔ Hair Attachments
@@ -78,6 +81,19 @@ class HairStyle(db.Model):
     __tablename__ = 'hair_styles'
 
     id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
+
     name = db.Column(db.String(100), nullable=False)
     picture = db.Column(db.String(100), nullable=True)
     category = db.Column(db.String(100), nullable=False)
@@ -111,6 +127,19 @@ class HairStyleAlias(db.Model):
     __tablename__ = 'hair_style_aliases'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     service_provider_hairstyle_id = db.Column(
         db.Integer, db.ForeignKey('service_provider_hairstyles.id'), nullable=False
     )
@@ -123,6 +152,34 @@ class HairStyleAlias(db.Model):
             "service_provider_hairstyle_id": self.service_provider_hairstyle_id
         }
 
+
+# # ============================
+# # ADMIN
+# # ============================
+
+# class Admin(db.Model):
+#     __tablename__ = 'admins'
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     password = db.Column(db.String(200), nullable=False)
+#     contact = db.Column(db.String(100), nullable=False, unique=True)
+
+#     def set_password(self, password):
+#         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+#     def check_password(self, password):
+#         return bcrypt.check_password_hash(self.password, password)
+
+#     def to_dict(self):
+#         return {
+#             "id": self.id,
+#             "password": self.password,
+#             "contact": self.contact
+#         }
+
+
+
+
 # ============================
 # HAIR ATTACHMENTS
 # ============================
@@ -131,6 +188,19 @@ class HairAttachment(db.Model):
     __tablename__ = 'hair_attachments'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     picture = db.Column(db.String(100), nullable=True)
     name = db.Column(db.String(100), nullable=False)
     color = db.Column(db.String(100), nullable=False)
@@ -155,6 +225,11 @@ class HairAttachment(db.Model):
             "description": self.description
         }
 
+
+
+
+
+
 # ============================
 # SERVICES
 # ============================
@@ -163,6 +238,19 @@ class Service(db.Model):
     __tablename__ = 'services'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
 
@@ -186,6 +274,19 @@ class ServiceProvider(db.Model):
     __tablename__ = 'service_providers'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     role = db.Column(db.String(100), nullable=False, default='service_provider')
     surname = db.Column(db.String(100), nullable=False)
     given_name = db.Column(db.String(100), nullable=False)
@@ -213,7 +314,7 @@ class ServiceProvider(db.Model):
         'ServiceProviderServices',
         back_populates='service_provider'
     )
-    
+
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
@@ -244,6 +345,19 @@ class Client(db.Model):
     __tablename__ = 'clients'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     surname = db.Column(db.String(100), nullable=False)
     given_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=False)
@@ -253,17 +367,17 @@ class Client(db.Model):
     location = db.Column(db.Text, nullable=False)
     hair_type = db.Column(db.String(100), nullable=True)
     password = db.Column(db.String(200), nullable=False)
-    
+
     reviews = db.relationship("Review", backref="client", lazy=True)
     appointments = db.relationship("Appointment", backref="client", lazy=True)
-    
-    
+
+
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
-    
+
     def is_client(self):
         return self.role == "client"
 
@@ -287,6 +401,19 @@ class Review(db.Model):
     __tablename__ = 'reviews'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     rating = db.Column(db.Integer, nullable=False)
@@ -312,6 +439,19 @@ class Appointment(db.Model):
     __tablename__ = 'appointments'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     date_created = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
     venue = db.Column(db.String(100), nullable=False)
@@ -349,6 +489,19 @@ class ServiceAlias(db.Model):
     __tablename__ = 'service_aliases'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), # Sets the time when the record is first created
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=func.now(), 
+        onupdate=func.now(), # Updates the time every time the record is modified
+        nullable=False
+    )
+
     alias_name = db.Column(db.String(100), nullable=False)
     service_provider_services_id = db.Column(
         db.Integer, db.ForeignKey('service_provider_services.id'), nullable=False
