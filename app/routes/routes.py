@@ -83,3 +83,4 @@ def refresh():
 def get_clients():
     clients = Client.query.all()
     return jsonify([client.to_dict() for client in clients]), 200
+
