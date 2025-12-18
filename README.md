@@ -1,6 +1,7 @@
 # Just Hair Site
 
-[Deployment Link](https://just-hair-backend-4e86.onrender.com)
+[Deployment Link](https://just-hair-backend-4e86.onrender.com)  
+[Documentation](https://just-hair-backend-4e86.onrender.com/docs)  
 
 ## Description
 
