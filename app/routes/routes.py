@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.models import Client
+from app.models import Service
 from app import db,limiter
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity, create_refresh_token
 from datetime import timedelta
@@ -83,3 +84,9 @@ def refresh():
 def get_clients():
     clients = Client.query.all()
     return jsonify([client.to_dict() for client in clients]), 200
+
+
+@routes_bp.route('/services', methods=['GET'])
+def get_services():
+    services= Service.query.all()
+    return jsonify([service.to_dict() for service in services]), 200
