@@ -27,6 +27,16 @@ def get_service():
     all_services = Service.query.all()
     return jsonify([service.to_dict() for service in all_services])
 
+
+#the route gets a service by id
+@service_bp.route ('/api/service/<int:id>', methods=['GET'])
+def get_service_by_id(id):
+    service = Service.query.get(id)
+    if not service:
+        return jsonify({"error": "service not found"}), 404
+    return jsonify(service.to_dict()), 200
+
+
 #this route updates a service
 @service_bp.route('/api/service/<int:id>', methods=['PUT'])
 def update_service(id):

@@ -84,6 +84,12 @@ def create_app():
     
     from app.routes.service import service_bp
     app.register_blueprint(service_bp)
+    
+    from app.routes.hairstyles import hairstyles_bp
+    app.register_blueprint(hairstyles_bp)
+    
+    from app.routes.hairstyle_aliases import hairstyle_aliases_bp
+    app.register_blueprint(hairstyle_aliases_bp)
 
     return app
 
