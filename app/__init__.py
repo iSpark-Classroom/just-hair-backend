@@ -69,19 +69,21 @@ def create_app():
     # Register routes (Blueprints)
     from app.routes.routes import routes_bp
     app.register_blueprint(routes_bp)
-   
-        
+
     from app.routes.reviews import  reviews_bp
     app.register_blueprint(reviews_bp)
-    
- 
+
     from app.routes.client import client_bp
     app.register_blueprint(client_bp)
   
     from app.routes.hairattachment import hairattachment_bp
     app.register_blueprint(hairattachment_bp)
+    
     from app.routes.serviceprovider import serviceprovider_bp
     app.register_blueprint(serviceprovider_bp)
+    
+    from app.routes.service import service_bp
+    app.register_blueprint(service_bp)
 
     return app
 
