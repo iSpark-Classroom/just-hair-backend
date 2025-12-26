@@ -6,11 +6,6 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 
 serviceprovider_bp = Blueprint('serviceprovider_bp', __name__)
 
-#this route is to get all service providers
-@serviceprovider_bp.route ('/api/serviceproviders', methods=['GET'])
-def get_serviceproviders():
-    all_serviceproviders = ServiceProvider.query.all()
-    return jsonify([serviceprovider.to_dict() for serviceprovider in all_serviceproviders])
 
 #this route creates a new service provider
 @serviceprovider_bp.route ('/api/serviceprovider' , methods=['POST'])
@@ -23,6 +18,22 @@ def add_serviceprovider():
     except Exception as e:
         return jsonify({"message": "error", "error": f"{e}"}), 400
     return jsonify(new_serviceprovider.to_dict()), 201
+
+
+#this route gets all service providers
+@serviceprovider_bp.route ('/api/serviceproviders', methods=['GET'])
+def get_serviceproviders():
+    all_serviceproviders = ServiceProvider.query.all()
+    return jsonify([serviceprovider.to_dict() for serviceprovider in all_serviceproviders])
+
+
+#this route gets a service provider by id
+@serviceprovider_bp.route ('/api/serviceprovider/<int:id>', methods=['GET'])
+def get_serviceprovider_by_id(id):
+    serviceprovider = ServiceProvider.query.get(id)
+    if not serviceprovider:
+        return jsonify({"error": "service provider not found"}), 404
+    return jsonify(serviceprovider.to_dict()), 200
 
 
 

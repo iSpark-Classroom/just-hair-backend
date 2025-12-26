@@ -5,17 +5,8 @@ from flask_migrate import Migrate
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity, create_refresh_token
 
 
-
-
 hairattachment_bp = Blueprint('hairattachment_bp', __name__)
 
-
-
-#this route is to get all hairattachments
-@hairattachment_bp.route ('/api/hairattachments', methods=['GET'])
-def get_hairattachments():
-    all_hairattachments = HairAttachment.query.all()
-    return jsonify([hairattachment.to_dict() for hairattachment in all_hairattachments])
 
 #this route creates a new a hair attachments
 @hairattachment_bp.route ('/api/hairattachments' , methods=['POST'])
@@ -28,6 +19,23 @@ def add_hairattachment():
     except Exception as e:
         return jsonify({"message": "error", "error": f"{e}","trace": "check data types and required fields"}), 400
     return jsonify(new_hairattachment.to_dict()), 201
+
+
+
+#this route is to get all hairattachments
+@hairattachment_bp.route ('/api/hairattachments', methods=['GET'])
+def get_hairattachments():
+    all_hairattachments = HairAttachment.query.all()
+    return jsonify([hairattachment.to_dict() for hairattachment in all_hairattachments])
+
+
+#this route gets a hair attachment by id
+@hairattachment_bp.route ('/api/hairattachment/<int:id>', methods=['GET'])
+def get_hairattachment_by_id(id):
+    hairattachment = HairAttachment.query.get(id)
+    if not hairattachment:
+        return jsonify({"error": "hair attachment not found"}), 404
+    return jsonify(hairattachment.to_dict()), 200
 
 
 #this route updates all hair attachments
